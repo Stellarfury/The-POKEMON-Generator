@@ -9,6 +9,16 @@ const enterBtn = document.getElementById('enter');
 const loginDiv = document.getElementById('login');
 const gameDiv = document.getElementById('game');
 const playerSpan = document.getElementById('player');
+   (async () => {
+     const user = await auth0.getUser();
+     if (user) {
+       document.getElementById('login').style.display = 'none';
+       document.getElementById('game').style.display = 'block';
+       document.getElementById('player').textContent = user.name || user.email;
+     }
+   })();
+
+
 
 enterBtn.onclick = () => {
   const name = nameInput.value.trim();

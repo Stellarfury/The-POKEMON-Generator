@@ -104,3 +104,4 @@ function updateScoreboard(newPoints) {
   localStorage.setItem('pokemonScores', scoresUl.innerHTML);
 }
 window.signup = () => auth0.loginWithRedirect({ screen_hint: 'signup' });
+console.log('Auth0 client created');

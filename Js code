@@ -1,0 +1,95 @@
+// ---------- helpers ----------
+function randint(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// ---------- login ----------
+const nameInput = document.getElementById('name');
+const enterBtn = document.getElementById('enter');
+const loginDiv = document.getElementById('login');
+const gameDiv = document.getElementById('game');
+const playerSpan = document.getElementById('player');
+
+enterBtn.onclick = () => {
+  const name = nameInput.value.trim();
+  if (!name) return;
+  loginDiv.style.display = 'none';
+  gameDiv.style.display = 'block';
+  playerSpan.textContent = name;
+  loadScoreboard();
+};
+
+// ---------- dice ----------
+const rollBtn = document.getElementById('roll');
+const diceDisplay = document.getElementById('diceDisplay');
+
+rollBtn.onclick = () => {
+  const dice = Array.from({length:6}, () => randint(1,6));
+  diceDisplay.innerHTML = dice.map(d => `<span class="die">${d}</span>`).join('');
+  const totalDice = dice.reduce((a,b)=>a+b);
+  fetchPokemons(totalDice);
+};
+
+// ---------- Pokémon fetching ----------
+const pokeList = document.getElementById('pokeList');
+const totalSpan = document.getElementById('total');
+
+function fetchPokemons(count) {
+  pokeList.innerHTML = '';
+  let fetched = 0;
+  let points = 0;
+
+  for (let i = 0; i < count; i++) {
+    // pick a random Pokémon from the first 898 (original + later)
+    fetch('https:                                                 
+      .then(r => r.json())
+      .then(data => {
+        const rand = data.results[randint(0, data.results.length - 1)];
+        return fetch(rand.url);
+      })
+      .then(r => r.json())
+      .then(p => {
+                        
+        const rarity = Math.random();
+        let type, pts;
+        if (rarity < 0.01) {                        
+          type = 'Mega';
+          pts = 5;
+        } else if (rarity < 0.06) {                       
+          type = 'Gigantamax';
+          pts = 2;
+        } else {                                
+          type = 'Ex';
+          pts = 1;
+        }
+
+        const li = document.createElement('li');
+        li.textContent = `${p.name} (${type}) – ${pts} pt`;
+        pokeList.appendChild(li);
+
+        points += pts;
+        fetched++;
+
+        if (fetched === count) {
+          totalSpan.textContent = points;
+          updateScoreboard(points);
+        }
+      })
+      .catch(err => console.error(err));
+  }
+}
+
+                                                  
+const scoresUl = document.getElementById('scores');
+
+function loadScoreboard() {
+  const stored = localStorage.getItem('pokemonScores');
+  scoresUl.innerHTML = stored ? stored : '';
+}
+
+function updateScoreboard(newPoints) {
+  const player = playerSpan.textContent;
+  const entry = `<li>${player}: ${newPoints}</li>`;
+  scoresUl.innerHTML += entry;
+  localStorage.setItem('pokemonScores', scoresUl.innerHTML);
+}

@@ -2,61 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Your Game – Auth0 Login</title>
+  <title>Pokéroll – Simple Multiplayer</title>
   <style>
-    /* Make the buttons big and easy to tap */
-    .big-btn {
-      font-size: 1.2rem;
-      padding: 0.8rem 1.5rem;
-      width: 100%;
-      box-sizing: border-box;
-      margin-top: 0.5rem;
-    }
-    body {font-family: sans-serif; padding: 1rem;}
+    body {font-family:sans-serif;padding:1rem;}
+    .big-btn {font-size:1.2rem;padding:0.8rem 1.5rem;width:100%;margin-top:.5rem;}
+    .center {text-align:center;}
+    #game, #waiting, #result {display:none;}
+    #diceResult img {width:100px;height:100px;}
+    #logo {width: 200px; height: 200px; margin-bottom: 20px;}
   </style>
+
+  <!-- Auth0 SDK -->
+  <script src="https:                                                                          
+  <!-- Socket.io client -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
 
-  <!-- Login area – shown before the user signs in -->
-  <div id="login">
-    <button class="big-btn" onclick="login()">Sign In</button>
-    <button class="big-btn" onclick="signup()">Sign Up</button>
-  </div>
+<!-- 1️⃣ Welcome / login screen -->
+<div id="welcome" class="center">
+  <video id="logo" autoplay loop muted style="width: 200px; height: 200px; margin-bottom: 20px;">
+  <source src="content://media/external/downloads/15007" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+ alt="Pokéroll Logo">
+  <h2>Welcome to Pokéroll!</h2>
+  <button class="big-btn" onclick="login()">Log In</button>
+  <button class="big-btn" onclick="signup()">Sign Up</button>
+  <button class="big-btn" onclick="playAsGuest()">Play as Guest</button>
+</div>
 
-  <!-- Game area – hidden until the user is logged in -->
-  <div id="game" style="display:none;">
-    <h2>Welcome, <span id="player"></span>!</h2>
-    <!-- Your game UI goes here -->
-    <button class="big-btn" onclick="logout()">Log Out</button>
-  </div>
+<!-- 2️⃣ Waiting for opponent -->
+<div id="waiting" class="center">
+  <h2>Looking for an opponent…</h2>
+</div>
 
-  <!-- Auth0 SDK and client initialization -->
-  <script src="https:                                                                           
-  <script type="module">
-    import createAuth0Client from 'https:manage.auth0.com                                                                  
+<!-- 3️⃣ Game screen -->
+<div id="game">
+  <h2>Your turn – <span id="opponent"></span></h2>
+  <div id="diceResult">Roll the dice!</div>
+  <button class="big-btn" onclick="rollDice()">Roll Dice</button>
+  <button class="big-btn" onclick="exitGame()">Exit Game</button>
+  <hr>
+  <div>Your score: <span id="myScore">0</span></div>
+  <div>Opponent score: <span id="oppScore">0</span></div>
+  <div id="timer">Time left: 10:00</div>
+</div>
 
-    (async () => {
-      const auth0 = await createAuth0Client({
-        domain: 'dev-lqvdqbi1n63tgefz.us.auth0.com',                                 
-        client_id: 'YDxtKnWQeL7cugCp2bOc5Lnrc10IOpD7',                                  
-        redirect_uri: window.location.origin
-      });
+<!-- 4️⃣ Result screen -->
+<div id="result" class="center">
+  <h2 id="resultText"></h2>
+  <button class="big-btn" onclick="startAnother()">Play Again</button>
+</div>
 
-                                                                     
-      window.login = () => auth0.loginWithRedirect();
-      window.signup = () => auth0.loginWithRedirect({ screen_hint: 'signup' });
-      window.logout = () => auth0.logout({ returnTo: window.location.origin });
+<script type="module">
+/* -------------------------------------------------------------
+   Auth0 configuration – replace with your own values
+   ------------------------------------------------------------- */
+const AUTH0_DOMAIN = 'your-domain.auth0.com';
+const AUTH0_CLIENT_ID = 'your-client-id';
+const AUTH0_AUDIENCE = 'https:                                                    
 
-                                                                 
-      const user = await auth0.getUser();
-      if (user) {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('game').style.display = 'block';
-        document.getElementById('player').textContent = user.name || user.email;
-      }
+const auth0 = await createAuth0Client({
+  domain: AUTH0_DOMAIN,
+  client_id: AUTH0_CLIENT_ID,
+  audience: AUTH0_AUDIENCE,
+  redirect_uri: window.location.origin
+});
 
-      console.log('Auth0 client ready');
-    })();
-  </script>
-</body>
-</html>
+                                                                                                                                                    
+let socket = null;                                       
+let roomId = null;                                                  
+let opponentId = null;                                        
+let myScore = 0, oppScore = 0;                                   
+let timer = 600;                                          
+let timerInterval = null;
+
+                                                                                                                                                  
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+function updateTimer() {
+  const m = Math.floor(timer / 60);
+  const s = timer % 60;
+  document.getElementById('timer').textContent = `Time left: ${m}:${s.toString().padStart(2,'0')}`;
+}
+
+                                                                                                                                                            
+window.login = () => auth0.loginWithRedirect();
+window.signup = () => auth0.loginWithRedirect({ screen_hint: 'signup' });
+window.playAsGuest = () => showGameScreen('Guest');
+
+                                                                                                                                                           
+async function startGame() {
+  hide('welcome');
+  show('waiting');
+
+                                                
+  const token = await auth0.getTokenSilently please check your logo file path in the HTML code. Make sure the file is in the same directory as your HTML file or specify the correct path. If you're hosting your logo file online, you can use the URL of the file.
+
+Let me know if you have any further questions!
+  

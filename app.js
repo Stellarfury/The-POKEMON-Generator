@@ -11,3 +11,4 @@ if (typeof auth0 !== 'undefined') {
     }
   })();
     }
+const socket = io('http://localhost:3000');
